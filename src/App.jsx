@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import BoxingLogo from './assets/boxing_logo.jpg';
 import NavBar from './components/NavBar';
 import About from './pages/About';
+import Chat from './pages/Chat'
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/chat" element={<Chat />} />
           </Routes>
         </div>
         <footer className="bg-gray-800 text-white text-center py-4">

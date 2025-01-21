@@ -14,8 +14,8 @@ const NavBar = () => {
                 <ul className='hidden xl:flex items-center gap-12 font-semibold text-base'>
                   <li className='p-3 hover:bg-red-800 hover:text-white rounded-md transition-all'><Link to="/">Home</Link></li>
                   <li className='p-3 hover:bg-red-800 hover:text-white rounded-md transition-all'><Link to="/about">About</Link></li>
+                  <li className='p-3 hover:bg-red-800 hover:text-white rounded-md transition-all'><Link to="/chat">Chat</Link></li>
                   <li className='p-3 hover:bg-red-800 hover:text-white rounded-md transition-all'>More Information</li>
-                  <li className='p-3 hover:bg-red-800 hover:text-white rounded-md transition-all'>Chat</li>
                 </ul>
         
                 <div className='relative hidden md:flex
@@ -50,7 +50,7 @@ const NavBar = () => {
                       <li className='list-none w-full text-center
                       pg-4 hover:bg-red-800 hover:text-white transition-all
                       cursor-pointer'>
-                        Leaders
+                        <Link to="/chat">Chat</Link>
                       </li>
                       <li className='list-none w-full text-center
                       pg-4 hover:bg-red-800 hover:text-white transition-all
