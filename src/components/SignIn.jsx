@@ -48,7 +48,7 @@ const SignIn = ( {toggleSignUp} ) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+            className="w-full mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
           >
             Sign In
           </button>
@@ -57,11 +57,11 @@ const SignIn = ( {toggleSignUp} ) => {
               onClick={toggleSignUp}
               className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
             >
-              Logout
+              Sign Up
         </button>
       </div>
     </div>
   );
 };
 
-export default signOut;
+export default SignIn;
