@@ -4,26 +4,14 @@ import dayGridPlugin from "@fullcalendar/daygrid"; // Day grid view plugin
 import interactionPlugin from "@fullcalendar/interaction"; // Enables event clicking and dragging
 import DayStatsBox from '../components/DayStatsBox.jsx';
 import { fetchCurrentUserData, isAdminUser } from "../util/UsersUtil";
+import { fetchAndSetEvents } from "../util/PracticeUtil.jsx";
 
 
 
 const Calendar = () => {
 
-  const [events, setEvents] = useState([
-    {
-      id: "1",
-      title: "Kickboxing Training",
-      start: new Date().toISOString().split("T")[0], // Today's date
-    },
-    {
-      id: "2",
-      title: "Boxing Sparring Session",
-      start: new Date(new Date().setDate(new Date().getDate() + 2))
-        .toISOString()
-        .split("T")[0], // 2 days later
-    },
-  ]);
-
+  const [events, setEvents] = useState([]);
+  const [visibleDates, setVisibleDates] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
 
@@ -33,6 +21,8 @@ const Calendar = () => {
     const checkAdminStatus = async () => {
         const isAdmin = await isAdminUser();
         setIsAdmin(isAdmin);
+        const calendarEvents = await fetchAndSetEvents();
+        setEvents(calendarEvents);
     };
     checkAdminStatus();
   }, [])
@@ -42,7 +32,7 @@ const Calendar = () => {
       
     }
     setSelectedDate(info.dateStr);
-    
+
     {/*
         const title = prompt("Enter event title:");
         if (title) {
@@ -58,11 +48,39 @@ const Calendar = () => {
     */}
   };
 
+  // Hanle when calenders clicked
   const handleEventClick = (info) => {
     if (window.confirm(`Do you want to delete "${info.event.title}"?`)) {
       setEvents(events.filter((event) => event.id !== info.event.id));
     }
   };
+
+  // Generate all dates between two given dates
+  const generateDateRange = (startDate, endDate) => {
+    const dates = [];
+    let currentDate = new Date(startDate);
+
+    while (currentDate <= new Date(endDate)) {
+      dates.push(currentDate.toISOString().split("T")[0]);
+      currentDate.setDate(currentDate.getDate() + 1); // Increment by one day
+    }
+
+    return dates;
+  };
+
+  // Callback for when the calendar's visible range changes
+  const handleDatesSet = (info) => {
+    const startDate = info.startStr; // Start date of the visible range
+    const endDate = info.endStr; // End date of the visible range
+    const datesInRange = generateDateRange(startDate, endDate);
+    setVisibleDates(datesInRange); // Store all visible dates in state
+    console.log("Visible Dates:", visibleDates);
+  };
+
+  // Log visible dates to console for debugging
+  useEffect(() => {
+    console.log("Visible Dates:", visibleDates);
+  }, [visibleDates]);
 
   return (
     <div className="container mx-auto py-8 px-4" >
@@ -80,6 +98,7 @@ const Calendar = () => {
           selectable={true}
           editable={true}
           height="auto"
+          datesSet={handleDatesSet}
         />
       </div>
       <DayStatsBox selectedDate={selectedDate}/>

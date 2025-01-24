@@ -2,10 +2,11 @@ import { auth } from "../../firebase";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const db = getFirestore();
 
-const SignUp = ({ toggleSignIn }) => {
+const SignUp = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const SignUp = ({ toggleSignIn }) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -41,6 +43,7 @@ const SignUp = ({ toggleSignIn }) => {
       await sendEmailVerification(user);
 
       setMessage("Sign up successful! Please check your email for verification.");
+      navigate("/signin")
     } catch (err) {
       setError(err.message);
     }
@@ -111,7 +114,9 @@ const SignUp = ({ toggleSignIn }) => {
           </button>
         </form>
         <button
-          onClick={toggleSignIn}
+          onClick={() => {
+            navigate("/signin")
+          }}
           className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition mt-4"
         >
           Login

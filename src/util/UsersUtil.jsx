@@ -44,14 +44,37 @@ const isAdminUser = async () => {
 
   const fetchAllUsers = async () => {
     try {
-      const usersCollectionRef = collection(db, "users");
-      const querySnapshot = await getDocs(usersCollectionRef);
-      const users = querySnapshot.docs.map((doc) => doc.data());
-      return users; // Return the array of user objects
+        const usersCollectionRef = collection(db, "users");
+        const querySnapshot = await getDocs(usersCollectionRef);
+        const users = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            uuid: doc.id // Add uuid property using document ID
+        }));
+        return users;
     } catch (error) {
-      console.error("Error fetching all users:", error);
-      return [];
+        console.error("Error fetching all users:", error);
+        return [];
     }
-  };
+};
 
-  export { fetchCurrentUserData, isAdminUser, fetchAllUsers };
+
+  //Get the users indormation from the uuid
+  const findUser = async (uuid) => {
+    try {
+        const userDocRef = await doc(db, "users", uuid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+            const userData = userDoc.data()
+            return userData
+        }else {
+            console.warn(`No user found with ${uuid}`)
+            return null;
+        }
+    } catch (error) {
+        console.error("Error With finding Uer", error)
+        return null;
+    }
+  }
+
+  export { fetchCurrentUserData, isAdminUser, fetchAllUsers, findUser };

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { auth } from "../../firebase";
+import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
-const SignIn = ( {toggleSignUp} ) => {
+const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -15,9 +17,14 @@ const SignIn = ( {toggleSignUp} ) => {
       // Sign in with email and password
       await signInWithEmailAndPassword(auth, email, password);
       alert("Sign in successful!");
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const handleSignUpRedirect = () => {
+    navigate("/signup"); // Redirect to the sign-up route
   };
 
   return (
@@ -54,8 +61,8 @@ const SignIn = ( {toggleSignUp} ) => {
           </button>
         </form>
         <button
-              onClick={toggleSignUp}
               className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+            onClick={handleSignUpRedirect}
             >
               Sign Up
         </button>
