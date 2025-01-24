@@ -31,7 +31,7 @@ const addAttendeeToPractice = async (uuid, docName) => {
         // Check if doc exists
         const practiceDoc = await getDoc(docRef);
         if(!practiceDoc.exists()){
-            console.log("No Practice on ${docName}");
+            console.log(`No Practice on ${docName}`);
             return;
         }
 
@@ -55,8 +55,15 @@ const checkForPractice = async (date) => {
 
         //Check if the document exists
         const practiceRef = await getDoc(docRef);
-        const msg = practiceRef.exists() ? "It DOes exist":"It doesnt exist";
-        console.log(msg);
+        if (practiceRef.exists()) {
+            const data = practiceRef.data(); // Get the document's data
+            //console.log(`Practice Doc:`, data);
+            //console.log(`Attendance Size: ${data.attendanceSize}`); // Access attendanceSize from data
+            return true;
+        } else {
+            console.log("Failed to fetch Practice info");
+            return false;
+        }
         return practiceRef.exists();
     }catch(error) {
         console.error("Check for Practice Error",error)
@@ -64,4 +71,26 @@ const checkForPractice = async (date) => {
     }
 }
 
-export {addPractice, addAttendeeToPractice, checkForPractice}
+//Get the info from practice doc
+const getPracticeInfo = async (date) => {
+    if (!date){
+        console.error("No practice today");
+        return;
+    }
+    try {
+        const docRef = await doc(db, "practices", date);
+
+        const practiceDoc = await getDoc(docRef);
+        if(practiceDoc.exists()){
+            const data = practiceDoc.data()
+            return data
+        }else{
+            console.error("No practice today");
+            return
+        }
+    }catch (error) {
+
+    }
+} 
+
+export {addPractice, addAttendeeToPractice, checkForPractice, getPracticeInfo}

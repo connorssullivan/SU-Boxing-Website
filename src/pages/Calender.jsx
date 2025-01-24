@@ -27,6 +27,8 @@ const Calendar = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
 
+
+  // On page load check if admin is logged in
   useEffect(() => {
     const checkAdminStatus = async () => {
         const isAdmin = await isAdminUser();
@@ -40,7 +42,7 @@ const Calendar = () => {
       
     }
     setSelectedDate(info.dateStr);
-
+    
     {/*
         const title = prompt("Enter event title:");
         if (title) {

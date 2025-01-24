@@ -7,6 +7,8 @@ import About from './pages/About';
 import Chat from './pages/Chat'
 import Footer from './components/Footer'
 import Calendar from './pages/Calender';
+import SignIn from './components/SignIn';
+import SignUp from './components/SignUp';
 
 
 function App() {
@@ -23,7 +25,9 @@ function App() {
             <Route path="/chat" element={<div style={{ outline: "2px solid red" }}>
                                             <Chat />
                                         </div>} />
-            <Route path="/caleder" element={<Calendar />} />             
+            <Route path="/caleder" element={<Calendar />} />
+            <Route path="/signin" element={<SignIn />} />  
+            <Route path="/signup" element={<SignUp />} />               
           </Routes>
         </div>
         <Footer/>
