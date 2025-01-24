@@ -16,6 +16,7 @@ const DayStatsBox = (props) => {
     const [rsvpList, setRsvpList] = useState([]);
     const [rsvpNames, setRsvpNames] = useState([]);
     const [rsvpTotal, setRsvpTotal] = useState(0);
+    const [rsvpData, setRsvpData] = useState([]);
 
     // Format the date string
     const formatDate = (dateStr) => {
@@ -67,6 +68,14 @@ const DayStatsBox = (props) => {
                     );
                     setRsvpNames(rsvpNames); // Update rsvpNames state
                     setRsvpTotal(practiceData.rsvpSize || 0)
+
+                    const rsvpData = await Promise.all(
+                        practiceData.rsvp.map(async (id) => {
+                            const user = await findUser(id); // Fetch user by ID
+                            return user 
+                        })
+                    );
+                    setRsvpData(rsvpData); // Update rsvpNames state
                 }
 
                 // Fetch all users and filter out those in the RSVP list
@@ -111,19 +120,15 @@ const DayStatsBox = (props) => {
     };
 
     // Handle adding user to practice
-    const addToAttendees = async () => {
+    const addToAttendees = async (uuid) => {
         try {
-            // Check if a user is logged in
-            const currentUser = auth.currentUser;
-            if (!currentUser) {
-                alert("You need to sign in to join the practice.");
+            const isAdmin = await isAdminUser();
+            if (!isAdmin) {
+                alert("Only admins can add to practice");
                 return;
             }
-    
-            const userUid = currentUser.uid;
-    
             // Add the user to the attendees list
-            await addAttendeeToPractice(userUid, props.selectedDate);
+            await addAttendeeToPractice(uuid, props.selectedDate);
     
             // Refresh the practice data
             findOutIfPractice();
@@ -133,6 +138,7 @@ const DayStatsBox = (props) => {
             console.error("Error adding to attendees:", error);
         }
     };
+    
 
 
     // Use effect when the date changes
@@ -226,34 +232,43 @@ const DayStatsBox = (props) => {
                             )}
                         </div>
                     </div>
-                    <div className="flex flex-col">
-                        <span className="font-semibold text-gray-700 mb-1">Members:</span>
-                        <ul className=" list-inside text-gray-800">
-                            {members.map((member, index) => (
-                                <li key={index} className="ml-4">
-                                    <div className="bg-gray-400 hover:bg-gray-500 text-white rounded-lg p-4 mb-5 cursor-pointer shadow-md transition"
-                                                    onClick={addToAttendees}>
-                                    <button
-                                        disabled
-                                        className="flex items-center justify-center w-12 h-12 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition"
-                                        title={`${member.firstName} ${member.lastName}`}
-                                    >
-                                        {`${member.firstName.charAt(0)}${member.lastName.charAt(0)}`}
-                                    </button>
-                                    <p className="mt-2 text-gray-700 text-sm font-semibold">
-                                        <p className="mt-2 text-gray-700 text-sm font-semibold">
-                                        {member.firstName} {member.lastName} &nbsp;&nbsp;&nbsp; {member.email}
-                                    </p>
-                                    </p>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {console.log(rsvpData)}
+                    <MemberList people={rsvpData} addToAttendees={addToAttendees} title={'RSVP'} total={rsvpTotal}></MemberList>
+                    <MemberList people={members} addToAttendees={addToAttendees} title={'Members'} total={members.length}/>
                 </div>
             ) : (
                 insertCreateButton() // Invoke the function to render the button
             )}
+        </div>
+    );
+};
+
+
+const MemberList = ({ people, addToAttendees, title, total }) => {
+    return (
+        <div className="flex flex-col">
+            <span className="font-semibold text-gray-700 mb-1">{title}: {total}</span>
+            <ul className="list-inside text-gray-800">
+                {people.map((member, index) => (
+                    <li key={index} className="ml-4">
+                        <div
+                            className="bg-gray-400 hover:bg-gray-500 text-white rounded-lg p-4 mb-5 cursor-pointer shadow-md transition"
+                            onClick={() => addToAttendees(member.uuid)} // Pass uuid here
+                        >
+                            <button
+                                disabled
+                                className="flex items-center justify-center w-12 h-12 bg-red-600 text-white rounded-full shadow-lg hover:bg-red-700 transition"
+                                title={`${member.firstName} ${member.lastName}`}
+                            >
+                                {`${member.firstName.charAt(0)}${member.lastName.charAt(0)}`}
+                            </button>
+                            <p className="mt-2 text-gray-700 text-sm font-semibold">
+                                {member.firstName} {member.lastName} &nbsp;&nbsp;&nbsp; {member.email}
+                            </p>
+                        </div>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };
