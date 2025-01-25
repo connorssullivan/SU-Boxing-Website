@@ -9,6 +9,7 @@ import Footer from './components/Footer'
 import Calendar from './pages/Calender';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
+import ContactPage from './pages/contact';
 
 
 function App() {
@@ -27,7 +28,8 @@ function App() {
                                         </div>} />
             <Route path="/caleder" element={<Calendar />} />
             <Route path="/signin" element={<SignIn />} />  
-            <Route path="/signup" element={<SignUp />} />               
+            <Route path="/signup" element={<SignUp />} />  
+            <Route path="/contact" element={<ContactPage />} />              
           </Routes>
         </div>
         <Footer/>

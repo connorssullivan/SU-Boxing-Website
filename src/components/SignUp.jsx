@@ -37,6 +37,8 @@ const SignUp = () => {
         lastName: lastName,
         email: email,
         photoURL: null,
+        practicesMade: 0,
+        pushups: 0
       });
 
       // Send email verification

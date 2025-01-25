@@ -80,7 +80,7 @@ const NavBar = () => {
             Contact
           </Link>
           <Link
-            to="/fights"
+            to="/contact"
             className="hover:bg-red-800 hover:text-white px-4 py-2 rounded-md transition-all"
           >
             Upcoming Fights

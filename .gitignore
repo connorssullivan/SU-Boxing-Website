@@ -27,3 +27,4 @@ dist-ssr
 firebase.js
 ActionCodeSetting.js
 /src/AdminUsers.jsx
+.env.local

@@ -1,8 +1,11 @@
 import React from "react";
 import heroImage from "../assets/home-hero.jpg"; // Replace with an actual image path
 import logo from "../assets/boxing_logo.jpg"; // Replace with your logo path
+import { auth } from "../../firebase";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-br from-black to-gray-900 text-white">
       {/* Hero Section */}
@@ -20,7 +23,16 @@ const Home = () => {
         <p className="text-lg md:text-xl mt-4 z-10">
           Train Hard. Fight Strong. Join the Community.
         </p>
-        <button className="mt-8 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all z-10">
+        <button className="mt-8 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all z-10"
+        onClick={ async () => {
+          const currentUser = auth.currentUser;
+          if (!currentUser){
+            navigate("/signin");
+          }else{
+            alert("Your already Signed In")
+          }
+        }}
+        >
           Join Now
         </button>
       </div>

@@ -1,7 +1,8 @@
 import React from "react";
-import clubImage from "../assets/home-hero.jpg"; // Replace with actual image path
-import coachImage1 from "../assets/coach1.jpeg"; // Replace with actual image path
-import coachImage2 from "../assets/coach2.jpeg"; // Replace with actual image path
+import clubImage from "../assets/home-hero.jpg";
+import coachImage1 from "../assets/coach_austin.jpeg";
+import coachImage2 from "../assets/coach_connor.jpeg"; 
+import coachImage3 from "../assets/coach_kyle.jpeg"; 
 
 const About = () => {
   return (
@@ -36,16 +37,15 @@ const About = () => {
       <section className="bg-gray-800 py-16 px-8 md:px-32 text-center">
         <h2 className="text-3xl font-bold text-white mb-6">Our History</h2>
         <p className="text-lg text-gray-300 leading-relaxed">
-          Founded in 2020, our club has grown from a small group of passionate
-          fighters to a thriving community of athletes. We have proudly
-          represented Salisbury University in intercollegiate tournaments and
-          community events, earning recognition for our skill and sportsmanship.
+          Founded in 2018 from humble begginings, our club has grown from a small group of passionate
+          fighters to a thriving community of athletes. We have grown the club tremendously over the past 
+          few years, and we are proud to say we are working with SPY MMA to give our members the best expirience
         </p>
       </section>
 
       {/* Coaches Section */}
       <section className="py-16 px-8 md:px-32 text-center">
-        <h2 className="text-3xl font-bold mb-6">Meet Our Coaches</h2>
+        <h2 className="text-3xl font-bold mb-6">OurStaff</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Coach 1 */}
           <div className="bg-gray-800 rounded-lg p-6 shadow-lg text-left">
@@ -54,11 +54,12 @@ const About = () => {
               alt="Coach 1"
               className="w-32 h-32 rounded-full mx-auto mb-4"
             />
-            <h3 className="text-xl font-bold text-center">Coach Mike Johnson</h3>
+            <h3 className="text-xl font-bold text-center">President Austin</h3>
             <p className="text-gray-300 mt-2">
-              With over 10 years of professional boxing experience, Coach Mike
-              specializes in teaching technique and strategy. He’s dedicated to
-              helping athletes achieve their full potential.
+              With over 1 year of mma experience, Coach Austin
+              specializes in teaching technique. He’s dedicated to
+              helping athletes achieve their full potential. He can 
+              be your best friend, and your worst nightmare...
             </p>
           </div>
 
@@ -70,16 +71,32 @@ const About = () => {
               className="w-32 h-32 rounded-full mx-auto mb-4"
             />
             <h3 className="text-xl font-bold text-center">
-              Coach Sarah Thompson
+              SGA Representative
             </h3>
             <p className="text-gray-300 mt-2">
-              A seasoned kickboxing champion, Coach Sarah brings energy and
-              expertise to every session. Her focus is on building strength,
-              endurance, and confidence.
+              1 year of kickboxing experience. Coach Connor is here to help
+              you learn the foundations of kickboxing in a fun and safe enviorment.
             </p>
           </div>
         </div>
+        {/* Coach 3 */}
+        <div className="bg-gray-800 rounded-lg p-6 shadow-lg text-left">
+            <img
+              src={coachImage3}
+              alt="Coach 2"
+              className="w-32 h-32 rounded-full mx-auto mb-4"
+            />
+            <h3 className="text-xl font-bold text-center">
+              Treasurer
+            </h3>
+            <p className="text-gray-300 mt-2">
+              1 year of kickboxing experience. Coach Kyle will show you 
+              some great kickboxing techniques and combos to advance in the sport.
+            </p>
+          </div>
+       
       </section>
+      
 
       {/* Core Values */}
       <section className="bg-gray-900 py-16 px-8 md:px-32 text-center">

@@ -1,4 +1,4 @@
-import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion, collection } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion, collection, increment } from "firebase/firestore";
 import { findUser } from "./UsersUtil";
 
 const db = getFirestore();
@@ -28,33 +28,87 @@ const addPractice = async (date, dayOfWeek, startTime, endTime, attendanceSize =
 
 //This function updates the attendees
 const addAttendeeToPractice = async (uuid, docName) => {
-    try{
+    try {
         const docRef = doc(db, "practices", docName);
         
-        // Check if doc exists
+        // Check if practice document exists
         const practiceDoc = await getDoc(docRef);
-        if(!practiceDoc.exists()){
+        if (!practiceDoc.exists()) {
             console.log(`No Practice on ${docName}`);
             return;
         }
 
-        const attendanceList = practiceDoc.data()
-        const attendeeArray = attendanceList.attendees || []
+        const attendanceList = practiceDoc.data();
+        const attendeeArray = attendanceList.attendees || [];
 
         if (attendeeArray.includes(uuid)) {
-            console.log(`User ${uuid} has already IN attendatnce.`);
+            console.log(`User ${uuid} is already in attendance.`);
             return; 
         }
 
-        //Update the document
+        // Update the practice document
         await updateDoc(docRef, {
             attendees: arrayUnion(uuid),
-            attendanceSize: (practiceDoc.attendanceSize || 0) + 1,
-        })
-    }catch(error){
-        console.log(error)
+            attendanceSize: (attendanceList.attendanceSize || 0) + 1,
+        });
+
+        // Update the user's practicesMade field
+        const userDocRef = doc(db, "users", uuid);
+        await updateDoc(userDocRef, {
+            practicesMade: increment(1), // Increment practicesMade by 1
+        });
+
+        console.log(`User ${uuid} added to practice and practicesMade updated.`);
+    } catch (error) {
+        console.error("Error adding attendee to practice:", error);
     }
-}
+};
+
+
+//Remove attendee from practice
+const removeAttendeeFromPractice = async (uuid, docName) => {
+    try {
+        const docRef = doc(db, "practices", docName);
+
+        // Fetch the practice document
+        const practiceDoc = await getDoc(docRef);
+
+        if (!practiceDoc.exists()) {
+            console.log(`No practice found on ${docName}`);
+            return;
+        }
+
+        const data = practiceDoc.data();
+        const attendees = data.attendees || []; // Ensure attendees is an array
+
+        // Check if the user exists in the attendees list
+        if (!attendees.includes(uuid)) {
+            console.log(`User ${uuid} is not in the attendees list.`);
+            return;
+        }
+
+        // Remove the user from the attendees list
+        const updatedAttendees = attendees.filter((attendee) => attendee !== uuid);
+
+        // Update the practice document
+        await updateDoc(docRef, {
+            attendees: updatedAttendees,
+            attendanceSize: updatedAttendees.length, // Update the count
+        });
+
+        // Decrement the practicesMade field in the user's document
+        const userDocRef = doc(db, "users", uuid);
+        await updateDoc(userDocRef, {
+            practicesMade: increment(-1), // Decrement by 1
+        });
+
+        console.log(`Successfully removed ${uuid} from attendees and decremented practicesMade.`);
+    } catch (error) {
+        console.error("Error removing attendee:", error);
+    }
+};
+
+
 
 const addRsvpToPractice = async (uuid, date) => {
     try {
@@ -199,4 +253,4 @@ const fetchAndSetEvents = async () => {
 
 
 
-export {addPractice, addAttendeeToPractice, checkForPractice, getPracticeInfo, fetchAndSetEvents, addRsvpToPractice, removeRsvp}
+export {addPractice, addAttendeeToPractice, checkForPractice, getPracticeInfo, fetchAndSetEvents, addRsvpToPractice, removeRsvp, removeAttendeeFromPractice}

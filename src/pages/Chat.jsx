@@ -124,43 +124,83 @@ const Chat = () => {
           onChange={(e) => setGroup(e.target.value)}
         >
           <option value="general">General</option>
-          <option value="sports">Sports</option>
-          <option value="tech">Tech</option>
+          <option value="Callouts">Callouts</option>
+          <option value="Misc">Misc</option>
         </select>
       </div>
 
       {/* Messages */}
-      <div className="mb-4 bg-white p-4 rounded shadow-md h-64 overflow-y-auto">
-        {messages.map((msg) => (
-          <div key={msg.id} className="flex items-start mb-4">
-            <div className="w-10 h-10 flex-shrink-0 rounded-full bg-gray-300 flex items-center justify-center mr-4 overflow-hidden">
-              {msg.data.photoURL ? (
-                <img
-                  src={msg.data.photoURL}
-                  alt="Avatar"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="text-white font-bold">
-                  {msg.data.displayName
-                    .split(" ")
-                    .map((name) => name.charAt(0).toUpperCase())
-                    .join("")}
+      <div className="mb-4 bg-white p-4 rounded shadow-md h-96 overflow-y-auto">
+        {messages.map((msg) => {
+          const isCurrentUser = msg.data.uid === user?.uid;
+
+          return (
+            <div
+              key={msg.id}
+              className={`flex items-start mb-4 ${
+                isCurrentUser ? "justify-end" : "justify-start"
+              }`}
+            >
+              {!isCurrentUser && (
+                <div className="w-10 h-10 flex-shrink-0 rounded-full bg-gray-300 flex items-center justify-center mr-4 overflow-hidden">
+                  {msg.data.photoURL ? (
+                    <img
+                      src={msg.data.photoURL}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-white font-bold">
+                      {msg.data.displayName
+                        .split(" ")
+                        .map((name) => name.charAt(0).toUpperCase())
+                        .join("")}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              <div
+                className={`max-w-sm p-3 rounded-lg shadow-md ${
+                  isCurrentUser
+                    ? "bg-blue-300 text-black"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                {!isCurrentUser && (
+                  <span className="block font-bold text-sm">{msg.data.displayName}</span>
+                )}
+                <p>{msg.data.text}</p>
+                <span className="text-xs text-gray-500 block mt-1">
+                  {msg.data.timestamp
+                    ? new Date(msg.data.timestamp.toDate()).toLocaleString()
+                    : "Just now"}
                 </span>
+              </div>
+
+              {isCurrentUser && (
+                <div className="w-10 h-10 flex-shrink-0 rounded-full bg-gray-300 flex items-center justify-center ml-4 overflow-hidden">
+                  {msg.data.photoURL ? (
+                    <img
+                      src={msg.data.photoURL}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-white font-bold">
+                      {msg.data.displayName
+                        .split(" ")
+                        .map((name) => name.charAt(0).toUpperCase())
+                        .join("")}
+                    </span>
+                  )}
+                </div>
               )}
             </div>
-            <div>
-              <span className="font-bold">{msg.data.displayName}</span>
-              <p className="text-gray-700">{msg.data.text}</p>
-              <span className="text-sm text-gray-500">
-                {msg.data.timestamp
-                  ? new Date(msg.data.timestamp.toDate()).toLocaleString()
-                  : "Just now"}
-              </span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
 
       {/* New Message Input */}
       <div className="flex items-center">

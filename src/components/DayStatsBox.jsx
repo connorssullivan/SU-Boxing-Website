@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import React from "react";
-import {addPractice, addAttendeeToPractice, checkForPractice, getPracticeInfo, addRsvpToPractice, removeRsvp} from '../util/PracticeUtil'
+import {addPractice, addAttendeeToPractice, checkForPractice, getPracticeInfo, addRsvpToPractice, removeRsvp, removeAttendeeFromPractice } from '../util/PracticeUtil'
 import { fetchCurrentUserData, isAdminUser, fetchAllUsers, findUser } from "../util/UsersUtil";
 import { auth } from "../../firebase"; 
 
@@ -10,6 +10,7 @@ const DayStatsBox = (props) => {
     // Practice Data
     const [attendanceSize, setAttendanceSize] = useState(0); 
     const [attendees, setAttendees] = useState([]); 
+    const [attendeesData, setAttendeesData] = useState([]); 
     const [dayOfWeek, setDayOfWeek] = useState(""); 
     const [endTime, setEndTime] = useState(""); 
     const [startTime, setStartTime] = useState(""); 
@@ -43,11 +44,31 @@ const DayStatsBox = (props) => {
         );
     };
 
+    const removeFromAttendees = async (uuid) => {
+        try {
+            const isAdmin = await isAdminUser();
+            if (!isAdmin) {
+                alert("Only admins can remove attendees from practice.");
+                return;
+            }
+            // Remove the user from the attendees list
+            await removeAttendeeFromPractice(uuid, props.selectedDate);
+    
+            // Refresh the practice data
+            findOutIfPractice();
+    
+            alert("Successfully removed attendee.");
+        } catch (error) {
+            console.error("Error removing attendee:", error);
+        }
+    };
+    
+
     // Check if practice exists on selected date
     const findOutIfPractice = async () => {
         try {
             if (!props.selectedDate) return;
-
+    
             const practiceExists = await checkForPractice(props.selectedDate);
             if (practiceExists) {
                 setIsTherePractice(true);
@@ -59,31 +80,34 @@ const DayStatsBox = (props) => {
                     setAttendees(practiceData.attendees || []);
                     setDayOfWeek(practiceData.dayOfWeek || "");
                     setRsvpList(practiceData.rsvp || []);
-                    // Convert RSVP list (IDs) to names
-                    const rsvpNames = await Promise.all(
-                        practiceData.rsvp.map(async (id) => {
-                            const user = await findUser(id); // Fetch user by ID
-                            return user ? `${user.firstName} ${user.lastName}` : "Unknown User";
+    
+                    // Fetch full data for attendees
+                    const attendeesData = await Promise.all(
+                        practiceData.attendees.map(async (id) => {
+                            const user = await findUser(id);
+                            return { ...user, uuid: id }; // Ensure uuid is present
                         })
                     );
-                    setRsvpNames(rsvpNames); // Update rsvpNames state
-                    setRsvpTotal(practiceData.rsvpSize || 0)
-
+                    setAttendeesData(attendeesData);
+    
+                    // Fetch RSVP data and filter out attendees
                     const rsvpData = await Promise.all(
                         practiceData.rsvp.map(async (id) => {
-                            const user = await findUser(id); // Fetch user by ID
-                            return user 
+                            const user = await findUser(id);
+                            return { ...user, uuid: id }; // Ensure uuid is present
                         })
                     );
-                    setRsvpData(rsvpData); // Update rsvpNames state
+                    setRsvpData(rsvpData.filter((user) => !practiceData.attendees.includes(user.uuid)));
+    
+                    // Fetch all members and filter out attendees
+                    const allMembers = await fetchAllUsers();
+                    const filteredMembers = allMembers.filter(
+                        (member) =>
+                            !practiceData.attendees.includes(member.uuid) &&
+                            !practiceData.rsvp.includes(member.uuid)
+                    );
+                    setMembers(filteredMembers);
                 }
-
-                // Fetch all users and filter out those in the RSVP list
-                const allMembers = await fetchAllUsers();
-                const filteredMembers = allMembers.filter(
-                    (member) => !practiceData.rsvp.includes(member.uuid)
-                );
-                setMembers(filteredMembers);
             } else {
                 setIsTherePractice(false);
             }
@@ -91,6 +115,7 @@ const DayStatsBox = (props) => {
             console.error("Error checking for practice:", error);
         }
     };
+    
 
     // Handle creating a practice
     const handleCreatePractice = async () => {
@@ -207,33 +232,9 @@ const DayStatsBox = (props) => {
                                 {startTime} - {endTime}
                             </span>
                         </div>
-                        <div className="flex flex-col">
-                            <span className="font-semibold text-gray-700 mb-1">Attendees: {attendanceSize}</span>
-                            {attendees.length > 0 ? (
-                                <ul className="list-disc list-inside text-gray-800">
-                                    {attendees.map((attendee, index) => (
-                                        <li key={index} className="ml-4">{attendee}</li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-gray-500">No attendees yet.</p>
-                            )}
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="font-semibold text-gray-700 mb-1">RSVP: {rsvpTotal}</span>
-                            {rsvpList.length > 0 ? (
-                                <ul className="list-disc list-inside text-gray-800">
-                                    {rsvpNames.map((names, index) => (
-                                        <li key={index} className="ml-4">{names}</li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-gray-500">No Rsvp Yet.</p>
-                            )}
-                        </div>
+                        <MemberList people={attendeesData} addToAttendees={removeFromAttendees} title={'Attendees'} total={attendeesData.length}></MemberList>
                     </div>
-                    {console.log(rsvpData)}
-                    <MemberList people={rsvpData} addToAttendees={addToAttendees} title={'RSVP'} total={rsvpTotal}></MemberList>
+                    <MemberList people={rsvpData} addToAttendees={addToAttendees} title={'RSVP'} total={rsvpData.length}></MemberList>
                     <MemberList people={members} addToAttendees={addToAttendees} title={'Members'} total={members.length}/>
                 </div>
             ) : (
@@ -245,11 +246,14 @@ const DayStatsBox = (props) => {
 
 
 const MemberList = ({ people, addToAttendees, title, total }) => {
+    // Sort members by practicesMade in descending order
+    const sortedPeople = [...people].sort((a, b) => b.practicesMade - a.practicesMade);
+
     return (
         <div className="flex flex-col">
             <span className="font-semibold text-gray-700 mb-1">{title}: {total}</span>
             <ul className="list-inside text-gray-800">
-                {people.map((member, index) => (
+                {sortedPeople.map((member, index) => (
                     <li key={index} className="ml-4">
                         <div
                             className="bg-gray-400 hover:bg-gray-500 text-white rounded-lg p-4 mb-5 cursor-pointer shadow-md transition"
@@ -263,7 +267,7 @@ const MemberList = ({ people, addToAttendees, title, total }) => {
                                 {`${member.firstName.charAt(0)}${member.lastName.charAt(0)}`}
                             </button>
                             <p className="mt-2 text-gray-700 text-sm font-semibold">
-                                {member.firstName} {member.lastName} &nbsp;&nbsp;&nbsp; {member.email}
+                                {member.firstName} {member.lastName} &nbsp;&nbsp;&nbsp; {member.email} &nbsp;&nbsp;&nbsp; Practices Made: {member.practicesMade}
                             </p>
                         </div>
                     </li>
@@ -272,5 +276,6 @@ const MemberList = ({ people, addToAttendees, title, total }) => {
         </div>
     );
 };
+
 
 export default DayStatsBox;
