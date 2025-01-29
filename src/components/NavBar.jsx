@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import BoxingLogo from "../assets/boxing_logo.jpg";
+import BoxingLogo from "../assets/su-boxing-logo.jpeg";
 import { auth } from "../../firebase"; // Adjust based on your firebase setup
 import {fetchCurrentUserData} from "../util/UsersUtil";
 
@@ -80,10 +80,10 @@ const NavBar = () => {
             Contact
           </Link>
           <Link
-            to="/contact"
+            to="/leaders"
             className="hover:bg-red-800 hover:text-white px-4 py-2 rounded-md transition-all"
           >
-            Upcoming Fights
+            Leaders
           </Link>
 
           {/* User Authentication */}
@@ -163,11 +163,11 @@ const NavBar = () => {
             Contact
           </Link>
           <Link
-            to="/fights"
+            to="/leaders"
             className="hover:bg-red-800 hover:text-white px-4 py-2 rounded-md transition-all"
             onClick={() => setIsMenuOpen(false)}
           >
-            Upcoming Fights
+            Leaders
           </Link>
           {user ? (
             <button

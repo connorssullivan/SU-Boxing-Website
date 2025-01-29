@@ -21,6 +21,12 @@ const SignUp = () => {
     setError("");
     setMessage("");
 
+    // Check if the email ends with the allowed domain
+    if (!email.endsWith("@gulls.salisbury.edu")) {
+      setError("You can only sign up with a @gulls.salisbury.edu email address.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -38,14 +44,14 @@ const SignUp = () => {
         email: email,
         photoURL: null,
         practicesMade: 0,
-        pushups: 0
+        pushups: 0,
       });
 
       // Send email verification
       await sendEmailVerification(user);
 
       setMessage("Sign up successful! Please check your email for verification.");
-      navigate("/signin")
+      navigate("/signin");
     } catch (err) {
       setError(err.message);
     }

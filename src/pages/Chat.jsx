@@ -131,74 +131,74 @@ const Chat = () => {
 
       {/* Messages */}
       <div className="mb-4 bg-white p-4 rounded shadow-md h-96 overflow-y-auto">
-        {messages.map((msg) => {
-          const isCurrentUser = msg.data.uid === user?.uid;
+      {messages.map((msg) => {
+        const isCurrentUser = msg.data.uid === user?.uid;
 
-          return (
+        return (
+          <div
+            key={msg.id}
+            className={`flex items-start mb-4 ${
+              isCurrentUser ? "justify-end" : "justify-start"
+            }`}
+          >
+            {!isCurrentUser && (
+              <div className="w-10 h-10 flex-shrink-0 rounded-full bg-gray-300 flex items-center justify-center mr-4 overflow-hidden">
+                {msg.data.uid === "Qu4n2RuJ7nPVLsNnpY7AYKupYJJ3" ? (
+                  <img
+                    src={DefaultPic}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-white font-bold">
+                    {msg.data.displayName
+                      .split(" ")
+                      .map((name) => name.charAt(0).toUpperCase())
+                      .join("")}
+                  </span>
+                )}
+              </div>
+            )}
+
             <div
-              key={msg.id}
-              className={`flex items-start mb-4 ${
-                isCurrentUser ? "justify-end" : "justify-start"
+              className={`max-w-sm p-3 rounded-lg shadow-md ${
+                isCurrentUser
+                  ? "bg-blue-300 text-black"
+                  : "bg-gray-200 text-gray-800"
               }`}
             >
               {!isCurrentUser && (
-                <div className="w-10 h-10 flex-shrink-0 rounded-full bg-gray-300 flex items-center justify-center mr-4 overflow-hidden">
-                  {msg.data.photoURL ? (
-                    <img
-                      src={msg.data.photoURL}
-                      alt="Avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white font-bold">
-                      {msg.data.displayName
-                        .split(" ")
-                        .map((name) => name.charAt(0).toUpperCase())
-                        .join("")}
-                    </span>
-                  )}
-                </div>
+                <span className="block font-bold text-sm">{msg.data.displayName}</span>
               )}
-
-              <div
-                className={`max-w-sm p-3 rounded-lg shadow-md ${
-                  isCurrentUser
-                    ? "bg-blue-300 text-black"
-                    : "bg-gray-200 text-gray-800"
-                }`}
-              >
-                {!isCurrentUser && (
-                  <span className="block font-bold text-sm">{msg.data.displayName}</span>
-                )}
-                <p>{msg.data.text}</p>
-                <span className="text-xs text-gray-500 block mt-1">
-                  {msg.data.timestamp
-                    ? new Date(msg.data.timestamp.toDate()).toLocaleString()
-                    : "Just now"}
-                </span>
-              </div>
-
-              {isCurrentUser && (
-                <div className="w-10 h-10 flex-shrink-0 rounded-full bg-gray-300 flex items-center justify-center ml-4 overflow-hidden">
-                  {msg.data.photoURL ? (
-                    <img
-                      src={msg.data.photoURL}
-                      alt="Avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-white font-bold">
-                      {msg.data.displayName
-                        .split(" ")
-                        .map((name) => name.charAt(0).toUpperCase())
-                        .join("")}
-                    </span>
-                  )}
-                </div>
-              )}
+              <p>{msg.data.text}</p>
+              <span className="text-xs text-gray-500 block mt-1">
+                {msg.data.timestamp
+                  ? new Date(msg.data.timestamp.toDate()).toLocaleString()
+                  : "Just now"}
+              </span>
             </div>
-          );
-        })}
+
+            {isCurrentUser && (
+              <div className="w-10 h-10 flex-shrink-0 rounded-full bg-gray-300 flex items-center justify-center ml-4 overflow-hidden">
+                {msg.data.uid === "Qu4n2RuJ7nPVLsNnpY7AYKupYJJ3" ? (
+                  <img
+                    src={DefaultPic}
+                    alt="Avatar"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-white font-bold">
+                    {msg.data.displayName
+                      .split(" ")
+                      .map((name) => name.charAt(0).toUpperCase())
+                      .join("")}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
       </div>
 
 

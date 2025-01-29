@@ -1,4 +1,4 @@
-import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion, collection, increment } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, arrayUnion, collection, increment, deleteDoc } from "firebase/firestore";
 import { findUser } from "./UsersUtil";
 
 const db = getFirestore();
@@ -251,6 +251,16 @@ const fetchAndSetEvents = async () => {
     }
   };
 
+const deletePractice = async (practiceId) => {
+    try {
+      const practiceRef = doc(db, "practices", practiceId);
+      await deleteDoc(practiceRef);
+      console.log(`Practice with ID ${practiceId} deleted successfully.`);
+    } catch (error) {
+      console.error("Error deleting practice:", error);
+      throw error;
+    }
+};
 
 
-export {addPractice, addAttendeeToPractice, checkForPractice, getPracticeInfo, fetchAndSetEvents, addRsvpToPractice, removeRsvp, removeAttendeeFromPractice}
+export {addPractice, addAttendeeToPractice, checkForPractice, getPracticeInfo, fetchAndSetEvents, addRsvpToPractice, removeRsvp, removeAttendeeFromPractice, deletePractice}

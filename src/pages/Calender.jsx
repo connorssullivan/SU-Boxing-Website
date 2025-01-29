@@ -4,7 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid"; // Day grid view plugin
 import interactionPlugin from "@fullcalendar/interaction"; // Enables event clicking and dragging
 import DayStatsBox from '../components/DayStatsBox.jsx';
 import { fetchCurrentUserData, isAdminUser } from "../util/UsersUtil";
-import { fetchAndSetEvents } from "../util/PracticeUtil.jsx";
+import { deletePractice, fetchAndSetEvents } from "../util/PracticeUtil.jsx";
 
 
 
@@ -29,7 +29,7 @@ const Calendar = () => {
 
   const handleDateClick = (info) => {
     if (!isAdmin) {
-      
+     
     }
     setSelectedDate(info.dateStr);
 
@@ -49,9 +49,26 @@ const Calendar = () => {
   };
 
   // Hanle when calenders clicked
-  const handleEventClick = (info) => {
+  const handleEventClick = async (info) => {
+    handleDateClick({ dateStr: info.event.startStr });
+    if (!isAdmin) {
+      return
+    }
     if (window.confirm(`Do you want to delete "${info.event.title}"?`)) {
-      setEvents(events.filter((event) => event.id !== info.event.id));
+      try {
+        // Delete the event from Firestore
+        await deletePractice(info.event.id);
+
+        // Remove the event from the state
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== info.event.id)
+        );
+
+        alert("Practice deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting practice:", error);
+        alert("Failed to delete the practice. Please try again.");
+      }
     }
   };
 

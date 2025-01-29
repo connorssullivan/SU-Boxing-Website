@@ -1,6 +1,6 @@
 import React from "react";
 import heroImage from "../assets/home-hero.jpg"; // Replace with an actual image path
-import logo from "../assets/boxing_logo.jpg"; // Replace with your logo path
+import logo from "../assets/su-boxing-logo.jpeg"; // Replace with your logo path
 import { auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 
@@ -77,7 +77,7 @@ const Home = () => {
           </div>
           <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
           <h3 className="text-xl font-bold mb-4">Real MMA Gym</h3>
-            <p className="italic">Thanks to our president Austin, everyone in the club can get a membership at SPY MMA for just $25 a month.</p>
+            <p className="italic">Thanks to our president Austin, everyone in the club can get a membership at SBY MMA for just $50 a month.</p>
           </div>
           <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
           <h3 className="text-xl font-bold mb-4">Train For An Actual Fight</h3>

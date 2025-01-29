@@ -10,6 +10,7 @@ import Calendar from './pages/Calender';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import ContactPage from './pages/contact';
+import Leaderboard from './pages/leaders';
 
 
 function App() {
@@ -29,7 +30,8 @@ function App() {
             <Route path="/caleder" element={<Calendar />} />
             <Route path="/signin" element={<SignIn />} />  
             <Route path="/signup" element={<SignUp />} />  
-            <Route path="/contact" element={<ContactPage />} />              
+            <Route path="/contact" element={<ContactPage />} /> 
+            <Route path="/leaders" element={<Leaderboard />} />              
           </Routes>
         </div>
         <Footer/>
